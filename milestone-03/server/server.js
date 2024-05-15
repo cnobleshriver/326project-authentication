@@ -32,6 +32,19 @@ app.post("/login", (req, res) => {
     });
 });
 
+app.post("/refresh_token", (req, res) => {
+    const refreshToken = req.body.refreshToken;
+    spotifyApi.setRefreshToken(refreshToken);
+    spotifyApi.refreshAccessToken().then(data => {
+        res.json({
+            accessToken: data.body.access_token,
+        });
+    }).catch(err => {
+        res.sendStatus(400);
+    });
+});
+
+
 app.listen(3001, () => {
     console.log('Server is running on port 3001');
 });
