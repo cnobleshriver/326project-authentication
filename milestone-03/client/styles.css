@@ -60,3 +60,68 @@ body, html {
     font-size: 1rem;
     font-weight: bold;
 }
+
+.playlists-container {
+    margin-top: 20px;
+}
+
+.playlist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.playlist-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.playlist-info p {
+    margin: 5px 0;
+}
+
+.playlist-info a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    border: 1px solid #1ed760;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #1ed760;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.playlist-info a:hover {
+    background-color: #1ed760;
+    color: white;
+}
+
+.playlist-actions {
+    display: flex;
+    align-items: center;
+}
+
+.playlist-actions button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: 1px solid #1ed760;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #1ed760;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.playlist-actions button:hover {
+    background-color: #1ed760;
+    color: white;
+}
+
+.container {
+    margin-top: 20px;
+}

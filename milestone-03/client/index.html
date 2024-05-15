@@ -19,24 +19,18 @@
         </div>
     </header>
     <div class="container">
-        <div id="content"></div>
         <div>
-
-            <div>
-                <label for="playlists" class="form-label">Playlists</label>
-                <select id="playlists" class="form-control">
-                </select>
-                <input type="button" onclick="refreshPlaylists()" value="Refresh Playlists">
-
-            </div>
-
-            <div>
-                <label for="tracks" class="form-label">Tracks</label>
-                <select id="tracks" class="form-control">
-                </select>
-                <input type="button" onclick="fetchTracks()" value="Fetch Tracks">
-            </div>
+            <label for="playlists" class="form-label">Playlists</label>
+            <select id="playlists" class="form-control"></select>
+            <input type="button" onclick="refreshPlaylists()" value="Refresh Playlists">
+            <input type="button" onclick="addPlaylistToServer()" value="Add Playlist">
         </div>
+        <div>
+            <label for="tracks" class="form-label">Tracks</label>
+            <select id="tracks" class="form-control"></select>
+            <input type="button" onclick="fetchTracks()" value="Fetch Tracks">
+        </div>
+        <div id="stored-playlists" class="playlists-container"></div>
     </div>
 </body>
 </html>

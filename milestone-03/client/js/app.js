@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     url += "?client_id=" + CLIENT_ID;
     url += "&response_type=code";
     url += "&redirect_uri=" + encodeURI(REDIRECT_URI);
-    url += "&scope=user-read-private user-read-email";
+    url += "&scope=user-read-private user-read-email playlist-read-private";
 
     const code = new URLSearchParams(window.location.search).get('code');
 
@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('userProfilePicture', data.userProfilePicture);
 
                 displayUser(data.userName, data.userProfilePicture);
+                refreshPlaylists();
+                refreshStoredPlaylists();
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -60,9 +62,9 @@ function displayUser(userName, userProfilePicture) {
     const logoutButton = document.getElementById('logout-button');
 
     userInfo.innerHTML = `
-      <img src="${userProfilePicture}" alt="${userName}" class="profile-picture">
-      <span class="user-name">${userName}</span>
-  `;
+        <img src="${userProfilePicture}" alt="${userName}" class="profile-picture">
+        <span class="user-name">${userName}</span>
+    `;
     loginButton.style.display = 'none';
     logoutButton.style.display = 'block';
 }
@@ -147,7 +149,7 @@ function handleTracksResponse() {
         removeAllItems("tracks");
         data.items.forEach((item, index) => addTrack(item, index));
     } else if (this.status == 401) {
-        refreshAccessToken()
+        refreshToken()
     } else {
         console.log(this.responseText);
         alert(this.responseText);
@@ -159,4 +161,78 @@ function addTrack(item, index) {
     node.value = index;
     node.innerHTML = item.track.name + " (" + item.track.artists[0].name + ")";
     document.getElementById("tracks").appendChild(node);
+}
+
+function addPlaylistToServer() {
+    const accessToken = localStorage.getItem('accessToken');
+    const playlistId = document.getElementById("playlists").value;
+
+    if (playlistId) {
+        fetch('http://localhost:3001/add_playlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken, playlistId }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Playlist added successfully!');
+                refreshStoredPlaylists();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    } else {
+        alert('Please select a playlist first.');
+    }
+}
+
+function refreshStoredPlaylists() {
+    fetch('http://localhost:3001/playlists')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Stored Playlists:', data);
+            removeAllItems("stored-playlists");
+            data.forEach(item => addStoredPlaylist(item));
+        })
+        .catch((error) => {
+            console.error('Error fetching stored playlists:', error);
+        });
+}
+
+function addStoredPlaylist(item) {
+    let node = document.createElement("div");
+    node.className = "playlist-item";
+    node.innerHTML = `
+        <div class="playlist-info">
+            <h3>${item.name}</h3>
+            <p>Owner: ${item.owner}</p>
+            <p>Tracks: ${item.tracks}</p>
+            <p>Upvotes: <span id="upvotes-${item._id}">${item.upvotes}</span></p>
+            <a href="${item.href}" target="_blank">Open in Spotify</a>
+        </div>
+        <div class="playlist-actions">
+            <button onclick="upvotePlaylist('${item._id}')">👍</button>
+        </div>
+    `;
+    document.getElementById("stored-playlists").appendChild(node);
+}
+
+function upvotePlaylist(playlistId) {
+    fetch('http://localhost:3001/upvote_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playlistId }),
+    })
+        .then(response => response.json())
+        .then(() => {
+            const upvoteCount = document.getElementById(`upvotes-${playlistId}`);
+            upvoteCount.textContent = parseInt(upvoteCount.textContent) + 1;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
